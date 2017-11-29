@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+// TODO: shared superclass
 public class GeneAnalyser extends AbstractLoggingActor {
-
 
     @NoArgsConstructor
     @AllArgsConstructor
