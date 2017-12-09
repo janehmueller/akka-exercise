@@ -7,6 +7,7 @@ import akka.actor.dsl.Creators;
 import de.hpi.akka_exercise.StudentList;
 import java.io.Serializable;
 
+import de.hpi.akka_exercise.messages.ShutdownMessage;
 import de.hpi.akka_exercise.scheduling.SchedulingStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,4 +49,13 @@ abstract public class StudentAnalyzer extends AbstractLoggingActor {
     }
 
     protected abstract void handle(StudentsMessage message);
+
+    protected boolean hasFinished() {
+        return !this.schedulingStrategy.hasTasksInProgress();
+    }
+
+    protected void stopSelfAndListener() {
+        this.listener.tell(new ShutdownMessage(), this.getSelf());
+        this.getSelf().tell(PoisonPill.getInstance(), this.getSelf());
+    }
 }

@@ -19,6 +19,7 @@ public class Worker extends AbstractLoggingActor {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class HashCrackMessage implements Serializable {
+        private int id;
         private Map<String, Integer> hashIndexMap;
         private int rangeMin, rangeMax;
     }
@@ -56,6 +57,6 @@ public class Worker extends AbstractLoggingActor {
                 matchedHashes.put(message.hashIndexMap.get(passwordHash), password);
             }
         }
-        this.getSelf().tell(new PWCracker.PasswordMessage(matchedHashes), this.getSelf());
+        this.getSelf().tell(new PWCracker.PasswordMessage(message.id, matchedHashes), this.getSelf());
     }
 }

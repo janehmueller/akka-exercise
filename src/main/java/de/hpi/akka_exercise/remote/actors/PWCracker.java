@@ -23,6 +23,7 @@ public class PWCracker extends StudentAnalyzer {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PasswordMessage implements Serializable {
+        private int requestId;
         private Map<Integer, String> indexPasswordMap;
     }
 
@@ -44,5 +45,9 @@ public class PWCracker extends StudentAnalyzer {
 
     private void handle(PasswordMessage message) {
         this.listener.tell(new Listener.LogPasswordMessage(message.indexPasswordMap), this.getSelf());
+        this.schedulingStrategy.finished(message.requestId, this.getSender());
+        if(this.hasFinished()) {
+            this.stopSelfAndListener();
+        }
     }
 }
