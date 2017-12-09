@@ -17,7 +17,7 @@ abstract public class StudentAnalyzer extends AbstractLoggingActor{
     }
 
     public Props props() {
-        return Props.create(PWCracker.class);
+        return Props.create(this.getClass());
     }
 
     @Override
@@ -36,12 +36,12 @@ abstract public class StudentAnalyzer extends AbstractLoggingActor{
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-            .match(PWCracker.StudentsMessage.class, this::handle)
+            .match(StudentsMessage.class, this::handle)
             .matchAny(object -> this.log().error(this.getClass().getName() + " received unknown message: " + object.toString()))
             .build();
     }
 
-    private void handle(PWCracker.StudentsMessage message) {
+    private void handle(StudentsMessage message) {
         throw new NotImplementedException();
     }
 }
