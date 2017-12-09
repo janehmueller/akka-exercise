@@ -8,16 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-abstract public class StudentAnalyzer extends AbstractLoggingActor{
+abstract public class StudentAnalyzer extends AbstractLoggingActor {
 
     @NoArgsConstructor
     @AllArgsConstructor
     public static class StudentsMessage implements Serializable {
         private StudentList students;
-    }
-
-    public Props props() {
-        return Props.create(this.getClass());
     }
 
     @Override
@@ -41,7 +37,7 @@ abstract public class StudentAnalyzer extends AbstractLoggingActor{
             .build();
     }
 
-    private void handle(StudentsMessage message) {
+    private void handle(PWCracker.StudentsMessage message) {
         throw new NotImplementedException();
     }
 }

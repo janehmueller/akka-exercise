@@ -10,7 +10,7 @@ public class Reaper extends AbstractLoggingActor {
     public static final String DEFAULT_NAME = "reaper";
     private final Set<ActorRef> watchees = new HashSet<>();
 
-    public Props props() {
+    public static Props props() {
         return Props.create(FileReader.class);
     }
 
