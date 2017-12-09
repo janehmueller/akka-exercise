@@ -1,7 +1,7 @@
 package de.hpi.akka_exercise.scheduling;
 
 import akka.actor.ActorRef;
-import de.hpi.akka_tutorial.remote.actors.Worker;
+import de.hpi.akka_exercise.remote.actors.Worker;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
