@@ -33,6 +33,7 @@ public class PWCracker extends StudentAnalyzer {
         return receiveBuilder()
             .match(StudentsMessage.class, this::handle)
             .match(PasswordMessage.class, this::handle)
+            .match(BeginWorkMessage.class, this::handle)
             .matchAny(object -> this.log().error(this.getClass().getName() + " received unknown message: " + object.toString()))
             .build();
         // TODO final message to file write to write results
@@ -44,7 +45,7 @@ public class PWCracker extends StudentAnalyzer {
         int intervalSize =  Math.max(numPasswords / message.getNumSplits(), 1);
         for(int i = 0; i < numPasswords; i += intervalSize) {
             int rangeEnd = Math.min(i + intervalSize, numPasswords);
-            this.schedulingStrategy.schedule(nextQueryId, message.getStudents(), i, rangeEnd);
+            this.schedulingStrategy.schedule(nextQueryId, message.getStudents().createHashIndexMap(), i, rangeEnd);
             this.nextQueryId++;
         }
     }

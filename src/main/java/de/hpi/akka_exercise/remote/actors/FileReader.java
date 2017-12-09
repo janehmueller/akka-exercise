@@ -24,7 +24,8 @@ public class FileReader extends AbstractLoggingActor {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ReadStudentsMessage implements Serializable {
-        @Setter @Getter private String fileName;
+        private String fileName;
+        private int numSplits;
     }
 
     @Override
@@ -66,7 +67,7 @@ public class FileReader extends AbstractLoggingActor {
     }
 
     private void handle(ReadStudentsMessage message) {
-        StudentList students = readStudents(message.getFileName());
-        this.getSender().tell(new StudentAnalyzer.StudentsMessage(students), this.getSelf());
+        StudentList students = readStudents(message.fileName);
+        this.getSender().tell(new StudentAnalyzer.StudentsMessage(students, message.numSplits), this.getSelf());
     }
 }

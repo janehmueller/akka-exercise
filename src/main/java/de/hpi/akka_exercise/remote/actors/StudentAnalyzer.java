@@ -36,6 +36,15 @@ abstract public class StudentAnalyzer extends AbstractLoggingActor {
         private int numSplits;
     }
 
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class BeginWorkMessage implements Serializable {
+        private String fileName;
+        private ActorRef fileReader;
+        private int numSplits;
+    }
+
     @Override
     public void preStart() throws Exception {
         super.preStart();
@@ -50,6 +59,10 @@ abstract public class StudentAnalyzer extends AbstractLoggingActor {
     }
 
     protected abstract void handle(StudentsMessage message);
+
+    protected void handle(BeginWorkMessage message) {
+        message.fileReader.tell(new FileReader.ReadStudentsMessage(message.fileName, message.numSplits), this.getSelf());
+    }
 
     protected boolean hasFinished() {
         return !this.schedulingStrategy.hasTasksInProgress();
