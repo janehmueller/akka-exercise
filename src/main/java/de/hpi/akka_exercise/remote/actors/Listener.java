@@ -48,5 +48,4 @@ public class Listener extends AbstractLoggingActor {
             this.log().info("Cracked password for student {} ({}): {}", index, studentList.getStudent(index).getName() , password);
         }
     }
-
 }

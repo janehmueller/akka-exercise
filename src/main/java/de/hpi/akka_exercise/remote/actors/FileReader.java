@@ -15,6 +15,9 @@ import java.io.File;
 import java.io.Serializable;
 
 public class FileReader extends AbstractLoggingActor {
+
+    public static final String DEFAULT_NAME = "filereader";
+
     private StudentList studentList;
     private ActorRef master;
     private boolean pwCracker;

@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-abstract public class StudentAnalyzer extends AbstractLoggingActor{
+abstract public class StudentAnalyzer extends AbstractLoggingActor {
 
     protected StudentList studentList;
 

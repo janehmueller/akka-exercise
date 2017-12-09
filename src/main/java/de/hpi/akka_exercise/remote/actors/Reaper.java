@@ -10,9 +10,7 @@ public class Reaper extends AbstractLoggingActor {
     public static final String DEFAULT_NAME = "reaper";
     private final Set<ActorRef> watchees = new HashSet<>();
 
-    public static Props props() {
-        return Props.create(Reaper.class);
-    }
+    public static Props props() { return Props.create(Reaper.class); }
 
     public static class WatchMeMessage implements Serializable {}
 
