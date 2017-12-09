@@ -33,6 +33,7 @@ abstract public class StudentAnalyzer extends AbstractLoggingActor {
     @Getter
     public static class StudentsMessage implements Serializable {
         private StudentList students;
+        private int numSplits;
     }
 
     @Override

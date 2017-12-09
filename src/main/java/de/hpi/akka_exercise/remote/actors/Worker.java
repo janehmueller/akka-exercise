@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Worker extends AbstractLoggingActor {
-    final static int passwordLength = 7;
+    private final static int passwordLength = 7;
 
     public static Props props() { return Props.create(Worker.class); }
 

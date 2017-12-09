@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class PWCracker extends StudentAnalyzer {
     public static final String DEFAULT_NAME = "pwcracker";
+    public static final int numPasswords = 10000000;
 
     public PWCracker(final ActorRef listener, SchedulingStrategy.Factory schedulingStrategyFactory, int numLocalWorkers) {
         super(listener, schedulingStrategyFactory, numLocalWorkers);
@@ -40,7 +41,12 @@ public class PWCracker extends StudentAnalyzer {
 
     protected void handle(StudentsMessage message) {
         this.listener.tell(new Listener.StudentMessage(message.getStudents()), this.getSelf());
-        // TODO schedule
+        int intervalSize = numPasswords / message.getNumSplits();
+        for(int i = 0; i < numPasswords; i += intervalSize) {
+            int rangeEnd = Math.min(i + intervalSize, numPasswords);
+            this.schedulingStrategy.schedule(nextQueryId, message.getStudents(), i, rangeEnd);
+            this.nextQueryId++;
+        }
     }
 
     private void handle(PasswordMessage message) {
