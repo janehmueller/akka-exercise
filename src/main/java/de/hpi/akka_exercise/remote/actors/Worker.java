@@ -42,7 +42,7 @@ public class Worker extends AbstractLoggingActor {
     }
 
     private void handle(HashCrackMessage message) {
-        Map<Integer, Integer> matchedHashes = new HashMap<>();
+        Map<Integer, String> matchedHashes = new HashMap<>();
         Set<String> passwordHashes = message.hashIndexMap.keySet();
         String passwordHash, password, leadingZeros;
         for(int i = message.rangeMin; i < message.rangeMax; i++) {
@@ -51,9 +51,9 @@ public class Worker extends AbstractLoggingActor {
             password = leadingZeros + password;
             passwordHash = DigestUtils.sha256Hex(password);
             if(passwordHashes.contains(passwordHash)) {
-                matchedHashes.put(message.hashIndexMap.get(passwordHash), i);
+                matchedHashes.put(message.hashIndexMap.get(passwordHash), password);
             }
         }
-        // TODO send matches hashes
+        this.getSelf().tell(new PWCracker.PasswordMessage(matchedHashes), this.getSelf());
     }
 }

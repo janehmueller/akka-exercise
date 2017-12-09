@@ -7,13 +7,21 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class PWCracker extends AbstractLoggingActor {
+    private StudentList studentList;
 
     @NoArgsConstructor
     @AllArgsConstructor
     public static class StudentsMessage implements Serializable {
         private StudentList students;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PasswordMessage implements Serializable {
+        private Map<Integer, String> passwordMap;
     }
 
     public Props props() {
@@ -37,6 +45,7 @@ public class PWCracker extends AbstractLoggingActor {
     public Receive createReceive() {
         return receiveBuilder()
             .match(PWCracker.StudentsMessage.class, this::handle)
+            .match(PasswordMessage.class, this::handle)
             .matchAny(object -> this.log().error(this.getClass().getName() + " received unknown message: " + object.toString()))
             .build();
     }
@@ -44,5 +53,13 @@ public class PWCracker extends AbstractLoggingActor {
 
     private void handle(StudentsMessage message) {
         return;
+    }
+
+    private void handle(PasswordMessage message) {
+        for(Map.Entry<Integer, String> entry : message.passwordMap.entrySet()) {
+            int index = entry.getKey();
+            String password = entry.getValue();
+            studentList.updateStudentPassword(index, password);
+        }
     }
 }
