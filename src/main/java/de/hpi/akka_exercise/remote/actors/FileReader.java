@@ -14,18 +14,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.Serializable;
 
+@NoArgsConstructor
 public class FileReader extends AbstractLoggingActor {
-
     public static final String DEFAULT_NAME = "filereader";
-
-    private StudentList studentList;
-    private ActorRef master;
-    private boolean pwCracker;
-
-    public FileReader(ActorRef master, boolean pwCracker) {
-        this.master = master;
-        this.pwCracker = pwCracker;
-    }
 
     public static Props props() {
         return Props.create(FileReader.class);
@@ -57,7 +48,8 @@ public class FileReader extends AbstractLoggingActor {
         log().info("Stopped {}.", this.getSelf());
     }
 
-    private void readStudents(String file) {
+    private StudentList readStudents(String file) {
+        StudentList studentList = new StudentList();
         try {
             File studentFile = new File(getClass().getResource(file).toURI());
             BufferedReader reader = new BufferedReader(new java.io.FileReader(studentFile));
@@ -67,18 +59,15 @@ public class FileReader extends AbstractLoggingActor {
                 Student student = new Student(line);
                 students.addStudent(student);
             }
-            this.studentList = students;
+            studentList = students;
         } catch(Exception e) {
             this.log().error("Something went wrong {}.", e.getMessage());
         }
+        return studentList;
     }
 
     private void handle(ReadStudentsMessage message) {
-        readStudents(message.getFileName());
-        if(pwCracker) {
-            this.master.tell(new PWCracker.StudentsMessage(studentList), this.getSelf());
-        } else {
-            this.master.tell(new GeneAnalyser.StudentsMessage(studentList), this.getSelf());
-        }
+        StudentList students = readStudents(message.getFileName());
+        this.getSender().tell(new StudentAnalyzer.StudentsMessage(students), this.getSelf());
     }
 }
