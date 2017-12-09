@@ -5,9 +5,7 @@ import akka.actor.Props;
 import de.hpi.akka_exercise.Student;
 import de.hpi.akka_exercise.StudentList;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.io.BufferedReader;
 import java.io.File;

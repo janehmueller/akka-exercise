@@ -19,6 +19,7 @@ public class GeneAnalyser extends StudentAnalyzer {
     public Receive createReceive() {
         return receiveBuilder()
             .match(StudentsMessage.class, this::handle)
+            .match(BeginWorkMessage.class, this::handle)
             .matchAny(object -> this.log().error(this.getClass().getName() + " received unknown message: " + object.toString()))
             .build();
     }

@@ -2,6 +2,7 @@ package de.hpi.akka_exercise.remote.actors;
 
 import akka.actor.AbstractLoggingActor;
 import akka.actor.ActorRef;
+import akka.actor.Address;
 import akka.actor.PoisonPill;
 import akka.actor.dsl.Creators;
 import de.hpi.akka_exercise.StudentList;
@@ -38,11 +39,16 @@ abstract public class StudentAnalyzer extends AbstractLoggingActor {
 
     @NoArgsConstructor
     @AllArgsConstructor
-    @Getter
     public static class BeginWorkMessage implements Serializable {
         private String fileName;
         private ActorRef fileReader;
         private int numSplits;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RemoteSystemMessage implements Serializable {
+        private Address remoteAddress;
     }
 
     @Override
