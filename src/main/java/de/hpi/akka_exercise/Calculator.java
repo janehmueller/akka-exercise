@@ -11,6 +11,8 @@ import de.hpi.akka_exercise.remote.actors.GeneAnalyser;
 import de.hpi.akka_exercise.remote.actors.Listener;
 import de.hpi.akka_exercise.remote.actors.PWCracker;
 import de.hpi.akka_exercise.remote.actors.Reaper;
+import de.hpi.akka_exercise.remote.actors.StudentAnalyzer;
+import de.hpi.akka_exercise.remote.actors.StudentAnalyzer.BeginWorkMessage;
 import de.hpi.akka_exercise.scheduling.SchedulingStrategy;
 import de.hpi.akka_exercise.util.AkkaUtils;
 import java.util.Scanner;
@@ -41,8 +43,9 @@ public class Calculator {
             actorSystem.actorOf(PWCracker.props(listener, schedulingStrategyFactory, numLocalWorkers), PWCracker.DEFAULT_NAME) :
             actorSystem.actorOf(GeneAnalyser.props(listener, schedulingStrategyFactory, numLocalWorkers), GeneAnalyser.DEFAULT_NAME);
 
+		// TODO implement Shepard
 		// Create the Shepherd
-		// final ActorRef shepherd = actorSystem.actorOf(Shepherd.props(master), Shepherd.DEFAULT_NAME);
+		final ActorRef shepherd = actorSystem.actorOf(Shepherd.props(master), Shepherd.DEFAULT_NAME);
 
 		// Enter interactive loop
 		Calculator.enterInteractiveLoop(listener, master, shepherd);
@@ -111,7 +114,7 @@ public class Calculator {
 	}
 
 	private static void process(final ActorRef master) {
-        master.tell(new PWCracker.StudentsMessage(), ActorRef.noSender());
+        master.tell(new StudentAnalyzer.BeginWorkMessage(), ActorRef.noSender());
 	}
 
 	public static void awaitTermination(final ActorSystem actorSystem) {

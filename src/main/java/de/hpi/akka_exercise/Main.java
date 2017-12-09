@@ -202,8 +202,4 @@ public class Main {
 
         // worker: pw cracker
         // TODO: enrich student entries with clear text passwords
-
-
-
-    }
 }
