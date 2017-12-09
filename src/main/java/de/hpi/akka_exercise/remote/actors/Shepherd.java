@@ -2,6 +2,7 @@ package de.hpi.akka_exercise.remote.actors;
 
 import akka.actor.*;
 import de.hpi.akka_exercise.messages.ShutdownMessage;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -26,10 +27,8 @@ public class Shepherd extends AbstractLoggingActor {
     /**
      * Asks the {@link Shepherd} to subscribe the sender and its (remote) actor system as a slave to this actor system.
      */
-    public static class SubscriptionMessage implements Serializable {
-
-        private static final long serialVersionUID = 6122957437037004535L;
-    }
+    @NoArgsConstructor
+    public static class SubscriptionMessage implements Serializable {}
 
     // A reference to the master actor that spawns new workers upon the connection of new actor systems
     private final ActorRef master;
@@ -72,7 +71,7 @@ public class Shepherd extends AbstractLoggingActor {
             .match(SubscriptionMessage.class, this::handle)
             .match(ShutdownMessage.class, this::handle)
             .match(Terminated.class, this::handle)
-            .matchAny(object -> this.log().info(this.getClass().getName() + " received unknown message: " + object.toString()))
+            .matchAny(object -> this.log().error(this.getClass().getName() + " received unknown message: " + object.toString()))
             .build();
     }
 

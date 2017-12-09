@@ -3,6 +3,8 @@ package de.hpi.akka_exercise.remote.actors;
 import akka.actor.*;
 import akka.remote.DisassociatedEvent;
 import de.hpi.akka_exercise.messages.ShutdownMessage;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import scala.concurrent.ExecutionContextExecutor;
 import scala.concurrent.duration.Duration;
 
@@ -13,7 +15,6 @@ import java.util.concurrent.TimeUnit;
  * The slave actor tries to subscribe its actor system to a shepherd actor in a master actor system.
  */
 public class Slave extends AbstractLoggingActor {
-
     public static final String DEFAULT_NAME = "slave";
 
     /**
@@ -28,32 +29,17 @@ public class Slave extends AbstractLoggingActor {
     /**
      * Asks the {@link Slave} to subscribe to a (remote) {@link Shepherd} actor with a given address.
      */
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class AddressMessage implements Serializable {
-
-        private static final long serialVersionUID = -4399047760637406556L;
-
         private Address address;
-
-        public AddressMessage(final Address address) {
-            this.address = address;
-        }
-
-        /**
-         * For serialization/deserialization only.
-         */
-        @SuppressWarnings("unused")
-        private AddressMessage() {
-        }
     }
 
     /**
      * Asks the {@link Slave} to acknowledge a successful connection request with a (remote) {@link Shepherd} actor.
      */
-    public static class AcknowledgementMessage implements Serializable {
-
-        private static final long serialVersionUID = 2289467879887081348L;
-
-    }
+    @NoArgsConstructor
+    public static class AcknowledgementMessage implements Serializable {}
 
     // A scheduling item to keep on trying to reconnect as regularly
     private Cancellable connectSchedule;
@@ -84,7 +70,7 @@ public class Slave extends AbstractLoggingActor {
             .match(AcknowledgementMessage.class, this::handle)
             .match(ShutdownMessage.class, this::handle)
             .match(DisassociatedEvent.class, this::handle)
-            .matchAny(object -> this.log().info("Received unknown message: \"{}\" ({})", object, object.getClass()))
+            .matchAny(object -> this.log().error("Received unknown message: \"{}\" ({})", object, object.getClass()))
             .build();
     }
 

@@ -1,6 +1,7 @@
 package de.hpi.akka_exercise.remote.actors;
 
 import akka.actor.*;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ public class Reaper extends AbstractLoggingActor {
 
     public static Props props() { return Props.create(Reaper.class); }
 
+    @NoArgsConstructor
     public static class WatchMeMessage implements Serializable {}
 
     public static void watchWithDefaultReaper(AbstractActor actor) {
