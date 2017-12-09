@@ -36,8 +36,8 @@ public class RoundRobinSchedulingStrategy implements SchedulingStrategy {
 		this.master = master;
 	}
 
-	@Override
-	public void schedule(final int taskId, final long startNumber, final long endNumber) {
+    @Override
+    public void schedule(int taskId, Map<String, Integer> hashIndexMap, long startNumber, long endNumber) {
 
 		// Break the work up into numberOfWorkers chunks of numbers
 		final long numberOfNumbers = endNumber - startNumber + 1;
@@ -61,7 +61,9 @@ public class RoundRobinSchedulingStrategy implements SchedulingStrategy {
 		this.taskId2numberPendingResponses.put(taskId, this.numberOfWorkers);
 	}
 
-	@Override
+
+
+    @Override
 	public void finished(final int taskId, final ActorRef worker) {
 
 		// Decrement the number of pending responses for this task

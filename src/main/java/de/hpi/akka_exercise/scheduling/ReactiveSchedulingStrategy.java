@@ -129,8 +129,8 @@ public class ReactiveSchedulingStrategy implements SchedulingStrategy {
 		this.master = master;
 	}
 
-	@Override
-	public void schedule(final int taskId, final long startNumber, final long endNumber) {
+    @Override
+    public void schedule(int taskId, Map<String, Integer> hashIndexMap, long startNumber, long endNumber) {
 
 		// Create a new tracker for the query
 		QueryTracker tracker = new QueryTracker(taskId, startNumber, endNumber);
