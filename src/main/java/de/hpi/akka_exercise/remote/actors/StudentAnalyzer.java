@@ -39,6 +39,7 @@ abstract public class StudentAnalyzer extends AbstractLoggingActor {
 
     @NoArgsConstructor
     @AllArgsConstructor
+    @Getter
     public static class BeginWorkMessage implements Serializable {
         private String fileName;
         private ActorRef fileReader;
@@ -48,7 +49,7 @@ abstract public class StudentAnalyzer extends AbstractLoggingActor {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RemoteSystemMessage implements Serializable {
-        private Address remoteAddress;
+        @Getter private Address remoteAddress;
     }
 
     @Override

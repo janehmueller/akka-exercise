@@ -51,7 +51,7 @@ public class ReactiveSchedulingStrategy implements SchedulingStrategy {
 		}
 
 		/**
-		 * Assign a subquery of the tracked query to the worker. If a subquery was available, a {@link Worker.ValidationMessage} is send to the worker with master as sender.
+		 * Assign a subquery of the tracked query to the worker. If a subquery was available, a {@link Worker.HashCrackMessage} is send to the worker with master as sender.
 		 *
 		 * @return a new subquery or {@code null}
 		 */
@@ -64,7 +64,7 @@ public class ReactiveSchedulingStrategy implements SchedulingStrategy {
 			if (subquery == null) {
 				long subqueryRangeSize = Math.min(this.remainingRangeEndNumber - this.remainingRangeStartNumber + 1, MAX_SUBQUERY_RANGE_SIZE);
 				if (subqueryRangeSize > 0) {
-					subquery = new Worker.HashCrackMessage(this.id, this.remainingRangeStartNumber, this.remainingRangeStartNumber + subqueryRangeSize - 1);
+//					subquery = new Worker.HashCrackMessage(this.id, this.remainingRangeStartNumber, this.remainingRangeStartNumber + subqueryRangeSize - 1);
 					this.remainingRangeStartNumber += subqueryRangeSize;
 				}
 			}

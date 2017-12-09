@@ -1,7 +1,10 @@
 package de.hpi.akka_exercise.remote.actors;
 
 import akka.actor.ActorRef;
+import akka.actor.Deploy;
 import akka.actor.Props;
+import akka.actor.dsl.Creators;
+import akka.remote.RemoteScope;
 import de.hpi.akka_exercise.scheduling.SchedulingStrategy;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -34,6 +37,7 @@ public class PWCracker extends StudentAnalyzer {
             .match(StudentsMessage.class, this::handle)
             .match(PasswordMessage.class, this::handle)
             .match(BeginWorkMessage.class, this::handle)
+            .match(RemoteSystemMessage.class, this::handle)
             .matchAny(object -> this.log().error(this.getClass().getName() + " received unknown message: " + object.toString()))
             .build();
         // TODO final message to file write to write results
@@ -43,6 +47,7 @@ public class PWCracker extends StudentAnalyzer {
     protected void handle(StudentsMessage message) {
         this.listener.tell(new Listener.StudentMessage(message.getStudents()), this.getSelf());
         int intervalSize =  Math.max(numPasswords / message.getNumSplits(), 1);
+        // TODO every range is scheduled twice
         for(int i = 0; i < numPasswords; i += intervalSize) {
             int rangeEnd = Math.min(i + intervalSize, numPasswords);
             this.schedulingStrategy.schedule(nextQueryId, message.getStudents().createHashIndexMap(), i, rangeEnd);
@@ -56,5 +61,12 @@ public class PWCracker extends StudentAnalyzer {
         if(this.hasFinished()) {
             this.stopSelfAndListener();
         }
+    }
+
+    private void handle(RemoteSystemMessage message) {
+        ActorRef worker = this.getContext().actorOf(Worker.props().withDeploy(new Deploy(new RemoteScope(message.getRemoteAddress()))));
+        this.schedulingStrategy.addWorker(worker);
+        this.getContext().watch(worker);
+        this.log().info("New worker: {}.", worker);
     }
 }

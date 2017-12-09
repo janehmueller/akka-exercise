@@ -25,4 +25,8 @@ public class Student implements Serializable {
         this.passwordHash = splitLines[2];
         this.genomeSequence = splitLines[3];
     }
+
+    public boolean isCracked() {
+        return password != null;
+    }
 }

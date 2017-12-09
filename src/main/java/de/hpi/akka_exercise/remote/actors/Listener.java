@@ -3,6 +3,7 @@ package de.hpi.akka_exercise.remote.actors;
 import akka.actor.AbstractLoggingActor;
 import akka.actor.PoisonPill;
 import akka.actor.Props;
+import de.hpi.akka_exercise.Student;
 import de.hpi.akka_exercise.StudentList;
 import de.hpi.akka_exercise.messages.ShutdownMessage;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,9 @@ public class Listener extends AbstractLoggingActor {
         private Map<Integer, String> indexPasswordMap;
     }
 
+    @NoArgsConstructor
+    public static class LogMessage implements Serializable {}
+
     @Override
     public void preStart() throws Exception {
         super.preStart();
@@ -48,6 +52,7 @@ public class Listener extends AbstractLoggingActor {
         return receiveBuilder()
             .match(StudentMessage.class, this::handle)
             .match(LogPasswordMessage.class, this::handle)
+            .match(LogMessage.class, this::handle)
             .match(ShutdownMessage.class, this::handle)
             .matchAny(object -> this.log().error(this.getClass().getName() + " received unknown message: " + object.toString()))
             .build();
@@ -63,6 +68,20 @@ public class Listener extends AbstractLoggingActor {
             String password = entry.getValue();
             studentList.updateStudentPassword(index, password);
             this.log().info("Cracked password for student {} ({}): {}", index, studentList.getStudent(index).getName() , password);
+        }
+    }
+
+    private void handle(LogMessage message) {
+        if (studentList == null) {
+            this.log().info("No passwords have been cracked yet.");
+            return;
+        }
+        this.log().info("Cracked passwords for the following students:");
+        for(Student student : studentList.getStudents()) {
+            if(student.isCracked()) {
+                String name = String.format("Student %2d %23s", student.getIndex(), "(" + student.getName() + ")");
+                this.log().info("{} with password {} and hash {}", name, student.getPassword(), student.getPasswordHash());
+            }
         }
     }
 

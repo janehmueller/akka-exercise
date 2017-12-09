@@ -57,6 +57,6 @@ public class Worker extends AbstractLoggingActor {
                 matchedHashes.put(message.hashIndexMap.get(passwordHash), password);
             }
         }
-        this.getSelf().tell(new PWCracker.PasswordMessage(message.id, matchedHashes), this.getSelf());
+        this.getSender().tell(new PWCracker.PasswordMessage(message.id, matchedHashes), this.getSelf());
     }
 }

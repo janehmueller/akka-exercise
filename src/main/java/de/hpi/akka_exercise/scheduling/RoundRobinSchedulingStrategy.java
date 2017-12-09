@@ -43,8 +43,6 @@ public class RoundRobinSchedulingStrategy implements SchedulingStrategy {
 		this.taskId2numberPendingResponses.put(taskId, 1);
 	}
 
-
-
     @Override
 	public void finished(final int taskId, final ActorRef worker) {
 
