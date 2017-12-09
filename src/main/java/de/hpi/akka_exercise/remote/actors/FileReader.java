@@ -38,14 +38,20 @@ public class FileReader extends AbstractLoggingActor {
     public Receive createReceive() {
         return receiveBuilder()
             .match(ReadStudentsMessage.class, this::handle)
-            .matchAny(object -> this.log().error("Could not understand received message."))
+            .matchAny(object -> this.log().error(this.getClass().getName() + " received unknown message: " + object.toString()))
             .build();
+    }
+
+    @Override
+    public void preStart() throws Exception {
+        super.preStart();
+        Reaper.watchWithDefaultReaper(this);
     }
 
     @Override
     public void postStop() throws Exception {
         super.postStop();
-        this.log().info("Stopped {}.", this.self());
+        log().info("Stopped {}.", this.getSelf());
     }
 
     private void readStudents(String file) {
