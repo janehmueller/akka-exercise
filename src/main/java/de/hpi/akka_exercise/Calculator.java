@@ -11,8 +11,9 @@ import de.hpi.akka_exercise.remote.actors.GeneAnalyser;
 import de.hpi.akka_exercise.remote.actors.Listener;
 import de.hpi.akka_exercise.remote.actors.PWCracker;
 import de.hpi.akka_exercise.remote.actors.Reaper;
+import de.hpi.akka_exercise.remote.actors.Shepherd;
+import de.hpi.akka_exercise.remote.actors.Slave;
 import de.hpi.akka_exercise.remote.actors.StudentAnalyzer;
-import de.hpi.akka_exercise.remote.actors.StudentAnalyzer.BeginWorkMessage;
 import de.hpi.akka_exercise.scheduling.SchedulingStrategy;
 import de.hpi.akka_exercise.util.AkkaUtils;
 import java.util.Scanner;
@@ -48,7 +49,7 @@ public class Calculator {
 		final ActorRef shepherd = actorSystem.actorOf(Shepherd.props(master), Shepherd.DEFAULT_NAME);
 
 		// Enter interactive loop
-		Calculator.enterInteractiveLoop(listener, master, shepherd);
+		Calculator.enterInteractiveLoop(listener, master, shepherd, fileReader);
 
 		System.out.println("Stopping...");
 
@@ -56,7 +57,7 @@ public class Calculator {
 		Calculator.awaitTermination(actorSystem);
 	}
 
-	private static void enterInteractiveLoop(final ActorRef listener, final ActorRef master, final ActorRef shepherd) {
+	private static void enterInteractiveLoop(final ActorRef listener, final ActorRef master, final ActorRef shepherd, final ActorRef fileReader) {
 
 		// Read ranges from the console and process them
 		final Scanner scanner = new Scanner(System.in);
@@ -87,7 +88,7 @@ public class Calculator {
 					scanner.close();
 					return;
 				default:
-					Calculator.process(master);
+					Calculator.process(master, fileReader);
 			}
 		}
 	}
@@ -113,8 +114,9 @@ public class Calculator {
 		shepherd.tell(PoisonPill.getInstance(), ActorRef.noSender());
 	}
 
-	private static void process(final ActorRef master) {
-        master.tell(new StudentAnalyzer.BeginWorkMessage(), ActorRef.noSender());
+	private static void process(final ActorRef master, final ActorRef fileReader) {
+	    // TODO extract fileName and numSpilts to user options
+        master.tell(new StudentAnalyzer.BeginWorkMessage("students.csv", fileReader, 4), ActorRef.noSender());
 	}
 
 	public static void awaitTermination(final ActorSystem actorSystem) {
