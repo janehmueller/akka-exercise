@@ -41,7 +41,7 @@ public class PWCracker extends StudentAnalyzer {
 
     protected void handle(StudentsMessage message) {
         this.listener.tell(new Listener.StudentMessage(message.getStudents()), this.getSelf());
-        int intervalSize = numPasswords / message.getNumSplits();
+        int intervalSize =  Math.max(numPasswords / message.getNumSplits(), 1);
         for(int i = 0; i < numPasswords; i += intervalSize) {
             int rangeEnd = Math.min(i + intervalSize, numPasswords);
             this.schedulingStrategy.schedule(nextQueryId, message.getStudents(), i, rangeEnd);
