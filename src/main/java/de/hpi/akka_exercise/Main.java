@@ -70,7 +70,7 @@ public class Main {
             default:
                 throw new ParameterException(String.format("Unknown scheduling strategy: %s", masterCommand.schedulingStrategy));
         }
-        Calculator.runMaster(masterCommand.host, masterCommand.port, schedulingStrategyFactory, masterCommand.numLocalWorkers);
+        Calculator.runMaster(masterCommand.host, masterCommand.port, schedulingStrategyFactory, masterCommand.numLocalWorkers, masterCommand.type);
     }
 
     /**

@@ -23,7 +23,7 @@ public class Calculator {
 	private static final String DEFAULT_MASTER_SYSTEM_NAME = "MasterActorSystem";
 	private static final String DEFAULT_SLAVE_SYSTEM_NAME = "SlaveActorSystem";
 
-	public static void runMaster(String host, int port, SchedulingStrategy.Factory schedulingStrategyFactory, int numLocalWorkers) {
+	public static void runMaster(String host, int port, SchedulingStrategy.Factory schedulingStrategyFactory, int numLocalWorkers, String type) {
 
 		// Create the ActorSystem
 		final Config config = AkkaUtils.createRemoteAkkaConfig(host, port);
@@ -37,10 +37,9 @@ public class Calculator {
 		final ActorRef fileReader = actorSystem.actorOf(FileReader.props(), FileReader.DEFAULT_NAME);
 
 		// Create the Masters
-		final ActorRef pwCrackerMaster = actorSystem.actorOf(
-            PWCracker.props(listener, schedulingStrategyFactory, numLocalWorkers), PWCracker.DEFAULT_NAME);
-		final ActorRef geneAnalyzerMaster = actorSystem.actorOf(
-            GeneAnalyser.props(listener, schedulingStrategyFactory, numLocalWorkers), GeneAnalyser.DEFAULT_NAME);
+		final ActorRef master = type.equals("password") ?
+            actorSystem.actorOf(PWCracker.props(listener, schedulingStrategyFactory, numLocalWorkers), PWCracker.DEFAULT_NAME) :
+            actorSystem.actorOf(GeneAnalyser.props(listener, schedulingStrategyFactory, numLocalWorkers), GeneAnalyser.DEFAULT_NAME);
 
 		// Create the Shepherd
 		// final ActorRef shepherd = actorSystem.actorOf(Shepherd.props(master), Shepherd.DEFAULT_NAME);
@@ -67,18 +66,14 @@ public class Calculator {
 
 			// Read input
 			System.out.println("> Enter ...\n"
-					+ "  \"passwords\" to crack passwords,\n"
-					+ "  \"genes\" to analyze genes resemblance,\n"
+					+ "  \"print\" to print,\n"
 					+ "  \"exit\" for a graceful shutdown,\n"
 					+ "  \"kill\" for a hard shutdown:");
 			String line = scanner.nextLine();
 
 			switch (line) {
-				case "all":
-					listener.tell(new Listener.LogPrimesMessage(), ActorRef.noSender());
-					break;
-				case "max":
-					listener.tell(new Listener.LogMaxMessage(), ActorRef.noSender());
+				case "print":
+					listener.tell(new Listener.LogPasswordMessage(), ActorRef.noSender());
 					break;
 				case "exit":
 					Calculator.shutdown(shepherd, master);
@@ -89,7 +84,7 @@ public class Calculator {
 					scanner.close();
 					return;
 				default:
-					Calculator.process(line, master);
+					Calculator.process(master);
 			}
 		}
 	}
@@ -115,25 +110,8 @@ public class Calculator {
 		shepherd.tell(PoisonPill.getInstance(), ActorRef.noSender());
 	}
 
-	private static void process(final String line, final ActorRef master) {
-
-		// Check for correct range message
-		String[] lineSplit = line.split(",");
-		if (lineSplit.length != 2) {
-			System.out.println("Invalid range format: " + line);
-			return;
-		}
-
-		try {
-			// Extract start- and endNumber
-			long startNumber = Long.valueOf(lineSplit[0]);
-			long endNumber = Long.valueOf(lineSplit[1]);
-
-			// Start the calculation
-			master.tell(new Master.RangeMessage(startNumber, endNumber), ActorRef.noSender());
-		} catch (NumberFormatException e) {
-			System.out.println("Invalid number format for range: " + line);
-		}
+	private static void process(final ActorRef master) {
+        master.tell(new PWCracker.StudentsMessage(), ActorRef.noSender());
 	}
 
 	public static void awaitTermination(final ActorSystem actorSystem) {

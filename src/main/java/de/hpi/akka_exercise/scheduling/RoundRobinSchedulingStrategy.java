@@ -3,6 +3,7 @@ package de.hpi.akka_exercise.scheduling;
 import akka.actor.ActorRef;
 import akka.routing.RoundRobinRoutingLogic;
 import akka.routing.Router;
+import de.hpi.akka_exercise.remote.actors.Worker;
 import java.util.HashMap;
 import java.util.Map;
 
