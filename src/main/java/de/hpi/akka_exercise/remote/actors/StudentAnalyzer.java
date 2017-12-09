@@ -1,17 +1,31 @@
 package de.hpi.akka_exercise.remote.actors;
 
 import akka.actor.AbstractLoggingActor;
-import akka.actor.Props;
+import akka.actor.ActorRef;
+import akka.actor.PoisonPill;
+import akka.actor.dsl.Creators;
 import de.hpi.akka_exercise.StudentList;
 import java.io.Serializable;
+
+import de.hpi.akka_exercise.scheduling.SchedulingStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 abstract public class StudentAnalyzer extends AbstractLoggingActor {
+    protected final ActorRef listener;
+    protected final SchedulingStrategy schedulingStrategy;
+    protected int nextQueryId = 0;
 
-    protected StudentList studentList;
+    public StudentAnalyzer(final ActorRef listener, SchedulingStrategy.Factory schedulingStrategyFactory, int numLocalWorkers) {
+        this.listener = listener;
+        this.schedulingStrategy = schedulingStrategyFactory.create(this.getSelf());
+        for(int i = 0; i < numLocalWorkers; i++) {
+            ActorRef worker = this.getContext().actorOf(Worker.props());
+            this.schedulingStrategy.addWorker(worker);
+            this.getContext().watch(worker);
+        }
+    }
 
     @NoArgsConstructor
     @AllArgsConstructor
@@ -29,7 +43,7 @@ abstract public class StudentAnalyzer extends AbstractLoggingActor {
     @Override
     public void postStop() throws Exception {
         super.postStop();
-        // TODO stop listener
+        this.listener.tell(PoisonPill.getInstance(), this.getSelf());
         log().info("Stopped {}.", this.getSelf());
     }
 
