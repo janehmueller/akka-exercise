@@ -39,10 +39,10 @@ public class ReactiveSchedulingStrategy implements SchedulingStrategy {
 		private final int id;
 
 		// Keeps track of the currently posed subqueries and which actor is processing it.
-		private final Map<ActorRef, Worker.ValidationMessage> runningSubqueries = new HashMap<>();
+		private final Map<ActorRef, Worker.HashCrackMessage> runningSubqueries = new HashMap<>();
 
 		// Keeps track of failed subqueries, so as to reschedule them to some worker.
-		private final Queue<Worker.ValidationMessage> failedSubqueries = new LinkedList<>();
+		private final Queue<Worker.HashCrackMessage> failedSubqueries = new LinkedList<>();
 
 		QueryTracker(final int id, final long startNumber, final long endNumber) {
 			this.id = id;
@@ -58,13 +58,13 @@ public class ReactiveSchedulingStrategy implements SchedulingStrategy {
 		boolean assignWork(ActorRef worker, ActorRef master) {
 
 			// Select a failed subquery if any
-			Worker.ValidationMessage subquery = this.failedSubqueries.poll();
+			Worker.HashCrackMessage subquery = this.failedSubqueries.poll();
 
 			// Create a new subquery if no failed subquery was selected
 			if (subquery == null) {
 				long subqueryRangeSize = Math.min(this.remainingRangeEndNumber - this.remainingRangeStartNumber + 1, MAX_SUBQUERY_RANGE_SIZE);
 				if (subqueryRangeSize > 0) {
-					subquery = new Worker.ValidationMessage(this.id, this.remainingRangeStartNumber, this.remainingRangeStartNumber + subqueryRangeSize - 1);
+					subquery = new Worker.HashCrackMessage(this.id, this.remainingRangeStartNumber, this.remainingRangeStartNumber + subqueryRangeSize - 1);
 					this.remainingRangeStartNumber += subqueryRangeSize;
 				}
 			}
@@ -87,7 +87,7 @@ public class ReactiveSchedulingStrategy implements SchedulingStrategy {
 		 * @param worker the actor that just failed
 		 */
 		void workFailed(ActorRef worker) {
-			Worker.ValidationMessage failedTask = this.runningSubqueries.remove(worker);
+			Worker.HashCrackMessage failedTask = this.runningSubqueries.remove(worker);
 			if (failedTask != null) {
 				this.failedSubqueries.add(failedTask);
 			}
@@ -99,7 +99,7 @@ public class ReactiveSchedulingStrategy implements SchedulingStrategy {
 		 * @param worker the actor that just completed
 		 */
 		void workCompleted(ActorRef worker) {
-			Worker.ValidationMessage completedTask = this.runningSubqueries.remove(worker);
+			Worker.HashCrackMessage completedTask = this.runningSubqueries.remove(worker);
 			assert completedTask != null;
 		}
 
@@ -130,7 +130,7 @@ public class ReactiveSchedulingStrategy implements SchedulingStrategy {
 	}
 
     @Override
-    public void schedule(int taskId, Map<String, Integer> hashIndexMap, long startNumber, long endNumber) {
+    public void schedule(int taskId, Map<String, Integer> hashIndexMap, int startNumber, int endNumber) {
 
 		// Create a new tracker for the query
 		QueryTracker tracker = new QueryTracker(taskId, startNumber, endNumber);

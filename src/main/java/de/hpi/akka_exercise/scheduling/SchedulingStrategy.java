@@ -30,7 +30,7 @@ public interface SchedulingStrategy {
      * @param startNumber first number of the range
 	 * @param endNumber last number of the range
 	 */
-	void schedule(final int taskId, final Map<String, Integer> hashIndexMap, final long startNumber, final long endNumber);
+	void schedule(final int taskId, final Map<String, Integer> hashIndexMap, final int startNumber, final int endNumber);
 
 	/**
 	 * Notify the completion of a worker's task.

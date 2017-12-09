@@ -37,28 +37,10 @@ public class RoundRobinSchedulingStrategy implements SchedulingStrategy {
 	}
 
     @Override
-    public void schedule(int taskId, Map<String, Integer> hashIndexMap, long startNumber, long endNumber) {
-
-		// Break the work up into numberOfWorkers chunks of numbers
-		final long numberOfNumbers = endNumber - startNumber + 1;
-		final long segmentLength = numberOfNumbers / this.numberOfWorkers;
-
-		for (int i = 0; i < this.numberOfWorkers; i++) {
-
-			// Compute the start and end numbers for this worker
-			long currentStartNumber = startNumber + (i * segmentLength);
-			long currentEndNumber = currentStartNumber + segmentLength - 1;
-
-			// Handle any remainder if this is the last worker
-			if (i == this.numberOfWorkers - 1)
-				currentEndNumber = endNumber;
-
-			// Send a new message to the router for this subset of numbers
-			this.workerRouter.route(new Worker.ValidationMessage(taskId, currentStartNumber, currentEndNumber), this.master);
-		}
-
+    public void schedule(int taskId, Map<String, Integer> hashIndexMap, int startNumber, int endNumber) {
+        this.workerRouter.route(new Worker.HashCrackMessage(taskId, hashIndexMap, startNumber, endNumber), this.master);
 		// Store the task with numberOfWorkers pending responses
-		this.taskId2numberPendingResponses.put(taskId, this.numberOfWorkers);
+		this.taskId2numberPendingResponses.put(taskId, 1);
 	}
 
 
