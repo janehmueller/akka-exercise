@@ -11,7 +11,9 @@ public class GeneAnalyser extends StudentAnalyzer {
         super(listener, schedulingStrategyFactory, numLocalWorkers);
     }
 
-    public static Props props() { return Props.create(GeneAnalyser.class); }
+    public static Props props(final ActorRef listener, SchedulingStrategy.Factory schedulingStrategyFactory, final int numLocalWorkers) {
+        return Props.create(GeneAnalyser.class, () -> new GeneAnalyser(listener, schedulingStrategyFactory, numLocalWorkers));
+    }
 
     @Override
     public Receive createReceive() {
@@ -22,7 +24,7 @@ public class GeneAnalyser extends StudentAnalyzer {
     }
 
     protected void handle(StudentsMessage message) {
-        this.studentList = message.getStudents();
+        this.listener.tell(new Listener.StudentMessage(message.getStudents()), this.getSelf());
         // TODO schedule
     }
 }

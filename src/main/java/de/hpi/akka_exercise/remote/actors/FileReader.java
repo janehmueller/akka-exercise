@@ -1,7 +1,6 @@
 package de.hpi.akka_exercise.remote.actors;
 
 import akka.actor.AbstractLoggingActor;
-import akka.actor.ActorRef;
 import akka.actor.Props;
 import de.hpi.akka_exercise.Student;
 import de.hpi.akka_exercise.StudentList;

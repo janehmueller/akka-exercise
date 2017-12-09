@@ -16,13 +16,14 @@ public class PWCracker extends StudentAnalyzer {
         super(listener, schedulingStrategyFactory, numLocalWorkers);
     }
 
-    public static Props props() { return Props.create(PWCracker.class); }
+    public static Props props(final ActorRef listener, SchedulingStrategy.Factory schedulingStrategyFactory, final int numLocalWorkers) {
+        return Props.create(PWCracker.class, () -> new PWCracker(listener, schedulingStrategyFactory, numLocalWorkers));
+    }
 
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PasswordMessage implements Serializable {
         private Map<Integer, String> indexPasswordMap;
-
     }
 
     @Override
