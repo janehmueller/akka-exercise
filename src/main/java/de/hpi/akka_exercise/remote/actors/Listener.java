@@ -12,6 +12,9 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class Listener extends AbstractLoggingActor {
+
+    public static final String DEFAULT_NAME = "listener";
+
     private StudentList studentList;
 
     public static Props props() { return Props.create(Listener.class); }
