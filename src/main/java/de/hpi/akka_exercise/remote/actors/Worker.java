@@ -1,6 +1,7 @@
 package de.hpi.akka_exercise.remote.actors;
 
 import akka.actor.AbstractLoggingActor;
+import akka.actor.Props;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -11,8 +12,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class Worker extends AbstractLoggingActor {
-
     final static int passwordLength = 7;
+
+    public static Props props() { return Props.create(Worker.class); }
 
     @NoArgsConstructor
     @AllArgsConstructor

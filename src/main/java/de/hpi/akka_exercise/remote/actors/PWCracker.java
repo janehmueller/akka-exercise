@@ -1,8 +1,6 @@
 package de.hpi.akka_exercise.remote.actors;
 
-import akka.actor.AbstractLoggingActor;
 import akka.actor.Props;
-import de.hpi.akka_exercise.StudentList;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -11,34 +9,33 @@ import java.util.Map;
 
 public class PWCracker extends StudentAnalyzer {
 
-    private StudentList studentList;
-
-    public Props props() {
-        return Props.create(PWCracker.class);
-    }
+    public static Props props() { return Props.create(PWCracker.class); }
 
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PasswordMessage implements Serializable {
-        private Map<Integer, String> passwordMap;
+        private Map<Integer, String> indexPasswordMap;
 
     }
 
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-            .match(StudentAnalyzer.StudentsMessage.class, this::handle)
+            .match(StudentsMessage.class, this::handle)
             .match(PasswordMessage.class, this::handle)
             .matchAny(object -> this.log().error(this.getClass().getName() + " received unknown message: " + object.toString()))
             .build();
+        // TODO final message to file write to write results
+        // TODO message to listener
     }
 
-    private void handle(StudentsMessage message) {
-        return;
+    protected void handle(StudentsMessage message) {
+        this.studentList = message.getStudents();
+        // TODO schedule
     }
 
     private void handle(PasswordMessage message) {
-        for(Map.Entry<Integer, String> entry : message.passwordMap.entrySet()) {
+        for(Map.Entry<Integer, String> entry : message.indexPasswordMap.entrySet()) {
             int index = entry.getKey();
             String password = entry.getValue();
             studentList.updateStudentPassword(index, password);

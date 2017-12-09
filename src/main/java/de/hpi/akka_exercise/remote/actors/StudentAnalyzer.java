@@ -5,19 +5,19 @@ import akka.actor.Props;
 import de.hpi.akka_exercise.StudentList;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 abstract public class StudentAnalyzer extends AbstractLoggingActor{
 
+    protected StudentList studentList;
+
     @NoArgsConstructor
     @AllArgsConstructor
+    @Getter
     public static class StudentsMessage implements Serializable {
         private StudentList students;
-    }
-
-    public Props props() {
-        return Props.create(PWCracker.class);
     }
 
     @Override
@@ -33,15 +33,5 @@ abstract public class StudentAnalyzer extends AbstractLoggingActor{
         log().info("Stopped {}.", this.getSelf());
     }
 
-    @Override
-    public Receive createReceive() {
-        return receiveBuilder()
-            .match(PWCracker.StudentsMessage.class, this::handle)
-            .matchAny(object -> this.log().error(this.getClass().getName() + " received unknown message: " + object.toString()))
-            .build();
-    }
-
-    private void handle(PWCracker.StudentsMessage message) {
-        throw new NotImplementedException();
-    }
+    protected abstract void handle(StudentsMessage message);
 }

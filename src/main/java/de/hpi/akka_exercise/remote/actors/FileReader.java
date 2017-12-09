@@ -24,7 +24,7 @@ public class FileReader extends AbstractLoggingActor {
         this.pwCracker = pwCracker;
     }
 
-    public Props props() {
+    public static Props props() {
         return Props.create(FileReader.class);
     }
 
