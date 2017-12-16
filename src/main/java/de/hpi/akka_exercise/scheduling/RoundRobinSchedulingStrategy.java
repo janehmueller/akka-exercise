@@ -3,6 +3,7 @@ package de.hpi.akka_exercise.scheduling;
 import akka.actor.ActorRef;
 import akka.routing.RoundRobinRoutingLogic;
 import akka.routing.Router;
+import de.hpi.akka_exercise.Student;
 import de.hpi.akka_exercise.remote.actors.Worker;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +43,13 @@ public class RoundRobinSchedulingStrategy implements SchedulingStrategy {
 		// Store the task with numberOfWorkers pending responses
 		this.taskId2numberPendingResponses.put(taskId, 1);
 	}
+
+	@Override
+    public void schedule(final int taskId, final Student x, final Student y) {
+	    this.workerRouter.route(new Worker.FindGeneMatchMessage(taskId, x, y), this.master);
+        // Store the task with numberOfWorkers pending responses
+        this.taskId2numberPendingResponses.put(taskId, 1);
+    }
 
     @Override
 	public void finished(final int taskId, final ActorRef worker) {

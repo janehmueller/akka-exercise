@@ -9,6 +9,8 @@ import de.hpi.akka_exercise.messages.ShutdownMessage;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -33,6 +35,14 @@ public class Listener extends AbstractLoggingActor {
     }
 
     @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LogGeneMatchMessage implements Serializable {
+        private int studentIdX;
+        private int studentIdY;
+        private String mostCommonSubstring;
+    }
+
+    @NoArgsConstructor
     public static class LogMessage implements Serializable {}
 
     @Override
@@ -44,7 +54,7 @@ public class Listener extends AbstractLoggingActor {
     @Override
     public void postStop() throws Exception {
         super.postStop();
-        log().info("Stopped {}.", this.getSelf());
+        this.log().info("Stopped {}.", this.getSelf());
     }
 
     @Override
@@ -52,6 +62,7 @@ public class Listener extends AbstractLoggingActor {
         return receiveBuilder()
             .match(StudentMessage.class, this::handle)
             .match(LogPasswordMessage.class, this::handle)
+            .match(LogGeneMatchMessage.class, this::handle)
             .match(LogMessage.class, this::handle)
             .match(ShutdownMessage.class, this::handle)
             .matchAny(object -> this.log().error(this.getClass().getName() + " received unknown message: " + object.toString()))
@@ -71,6 +82,14 @@ public class Listener extends AbstractLoggingActor {
         }
     }
 
+    private void handle(LogGeneMatchMessage message) {
+        Student x = studentList.getStudent(message.studentIdX);
+        x.updateGenomeNeighbor(message.studentIdY, message.mostCommonSubstring);
+        Student y = studentList.getStudent(message.studentIdY);
+        y.updateGenomeNeighbor(message.studentIdX, message.mostCommonSubstring);
+        this.log().info("Finished comparing genome sequence for students {} ({}) and {} ({})", x.getIndex(), x.getName(), y.getIndex(), y.getName());
+    }
+
     private void handle(LogMessage message) {
         if (studentList == null) {
             this.log().info("No passwords have been cracked yet.");
@@ -86,7 +105,17 @@ public class Listener extends AbstractLoggingActor {
     }
 
     private void handle(ShutdownMessage message) {
-        // TODO write students to disk
+        try {
+            String fileName = "updatedStudents.csv";
+            PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+            for(String line : studentList.toCSV()) {
+                writer.write(line);
+            }
+            writer.close();
+            this.log().info("Wrote results to file \"{}\".", fileName);
+        } catch (IOException e) {
+            this.log().error("Error while writing result file: {}.", e.getMessage());
+        }
         this.getSelf().tell(PoisonPill.getInstance(), this.getSelf());
     }
 }

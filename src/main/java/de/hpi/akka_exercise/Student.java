@@ -13,9 +13,10 @@ public class Student implements Serializable {
     private int index;
     private String name;
     private String passwordHash;
-    private String password;
+    private String password = "";
     private String genomeSequence;
-    private int[] closestGenomeSequenceIndex;
+    private String closestGenomeSequence = "";
+    private int closestGenomeSequenceNeighbor;
 
     public Student(String line) {
         String[] splitLines = line.split(",");
@@ -28,5 +29,16 @@ public class Student implements Serializable {
 
     public boolean isCracked() {
         return password != null;
+    }
+
+    public void updateGenomeNeighbor(int neighborId, String genomeSequence) {
+        if(closestGenomeSequence.length() < genomeSequence.length()) {
+            closestGenomeSequence = genomeSequence;
+            closestGenomeSequenceNeighbor = neighborId;
+        }
+    }
+
+    public String toCSV() {
+        return index + "," + name + "," + password + "," + closestGenomeSequenceNeighbor + "," + closestGenomeSequenceNeighbor;
     }
 }

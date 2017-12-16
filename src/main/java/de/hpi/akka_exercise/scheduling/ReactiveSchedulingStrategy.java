@@ -1,6 +1,7 @@
 package de.hpi.akka_exercise.scheduling;
 
 import akka.actor.ActorRef;
+import de.hpi.akka_exercise.Student;
 import de.hpi.akka_exercise.remote.actors.Worker;
 import java.util.Collection;
 import java.util.HashMap;
@@ -139,6 +140,11 @@ public class ReactiveSchedulingStrategy implements SchedulingStrategy {
 		// Assign existing, possible free, workers to the new query
 		this.assignSubqueries();
 	}
+
+    @Override
+    public void schedule(final int taskId, final Student x, final Student y) {
+        // TODO
+    }
 
 	@Override
 	public boolean hasTasksInProgress() {

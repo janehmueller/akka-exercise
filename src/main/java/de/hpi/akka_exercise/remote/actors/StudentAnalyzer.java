@@ -62,7 +62,7 @@ abstract public class StudentAnalyzer extends AbstractLoggingActor {
     public void postStop() throws Exception {
         super.postStop();
         this.listener.tell(PoisonPill.getInstance(), this.getSelf());
-        log().info("Stopped {}.", this.getSelf());
+        this.log().info("Stopped {}.", this.getSelf());
     }
 
     protected abstract void handle(StudentsMessage message);

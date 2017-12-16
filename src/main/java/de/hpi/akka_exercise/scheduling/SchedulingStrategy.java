@@ -1,6 +1,7 @@
 package de.hpi.akka_exercise.scheduling;
 
 import akka.actor.ActorRef;
+import de.hpi.akka_exercise.Student;
 import de.hpi.akka_exercise.remote.actors.Worker;
 
 import java.util.Map;
@@ -23,7 +24,7 @@ public interface SchedulingStrategy {
 	}
 
 	/**
-	 * Schedule a new prime checking task in the given range.
+	 * Schedule a new hash cracking task in the given range.
 	 *
 	 * @param taskId the id of the task that is to be split and scheduled
 	 * @param hashIndexMap map containing the hashes and the student ids
@@ -31,6 +32,14 @@ public interface SchedulingStrategy {
 	 * @param endNumber last number of the range
 	 */
 	void schedule(final int taskId, final Map<String, Integer> hashIndexMap, final int startNumber, final int endNumber);
+
+    /**
+     * Schedule a new genome match task for the given students.
+     * @param taskId the id of the task that is to be split and scheduled
+     * @param x the first student
+     * @param y the second student
+     */
+	void schedule(final int taskId, final Student x, final Student y);
 
 	/**
 	 * Notify the completion of a worker's task.

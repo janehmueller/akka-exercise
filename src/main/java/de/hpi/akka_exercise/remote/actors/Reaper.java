@@ -24,13 +24,13 @@ public class Reaper extends AbstractLoggingActor {
     @Override
     public void preStart() throws Exception {
         super.preStart();
-        log().info("Started {}...", this.getSelf());
+        this.log().info("Started {}...", this.getSelf());
     }
 
     @Override
     public void postStop() throws Exception {
         super.postStop();
-        log().info("Stopped {}.", this.getSelf());
+        this.log().info("Stopped {}.", this.getSelf());
     }
 
     @Override

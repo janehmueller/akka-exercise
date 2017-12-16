@@ -45,7 +45,7 @@ public class FileReader extends AbstractLoggingActor {
     @Override
     public void postStop() throws Exception {
         super.postStop();
-        log().info("Stopped {}.", this.getSelf());
+        this.log().info("Stopped {}.", this.getSelf());
     }
 
     private StudentList readStudents(String file) {
