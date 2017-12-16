@@ -39,6 +39,6 @@ public class Student implements Serializable {
     }
 
     public String toCSV() {
-        return index + "," + name + "," + password + "," + closestGenomeSequence + "," + closestGenomeSequenceNeighbor;
+        return index + "," + name + "," + password + "," + closestGenomeSequenceNeighbor + "," + closestGenomeSequence;
     }
 }
