@@ -3,7 +3,6 @@ package de.hpi.akka_exercise.remote.actors;
 import akka.actor.ActorRef;
 import akka.actor.Deploy;
 import akka.actor.Props;
-import akka.actor.dsl.Creators;
 import akka.remote.RemoteScope;
 import de.hpi.akka_exercise.scheduling.SchedulingStrategy;
 import lombok.AllArgsConstructor;

@@ -109,7 +109,9 @@ public class Listener extends AbstractLoggingActor {
             String fileName = "updatedStudents.csv";
             PrintWriter writer = new PrintWriter(fileName, "UTF-8");
             for(String line : studentList.toCSV()) {
+                log().info("Writing: {}", line);
                 writer.write(line);
+                writer.write("\n");
             }
             writer.close();
             this.log().info("Wrote results to file \"{}\".", fileName);

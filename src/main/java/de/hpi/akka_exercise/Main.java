@@ -105,8 +105,7 @@ public class Main {
          * Defines the scheduling strategy to be used in the master.
          */
         @Parameter(names = {"-s", "--scheduler"}, description = "a scheduling strategy (round-robin or reactive)")
-//        String schedulingStrategy = "reactive";
-        String schedulingStrategy = "round-robin";
+        String schedulingStrategy = "reactive";
 
         @Parameter(names = {"-t", "--type"}, description = "type to process (gene, password)")
         String type = "password";
