@@ -14,7 +14,7 @@ import java.util.concurrent.TimeoutException;
 import scala.concurrent.Await;
 import scala.concurrent.duration.Duration;
 
-public class Calculator {
+public class TaskRunner {
 
     private static final String DEFAULT_MASTER_SYSTEM_NAME = "MasterActorSystem";
     private static final String DEFAULT_SLAVE_SYSTEM_NAME = "SlaveActorSystem";
@@ -40,12 +40,12 @@ public class Calculator {
         final ActorRef shepherd = actorSystem.actorOf(Shepherd.props(master), Shepherd.DEFAULT_NAME);
 
         // Enter interactive loop
-        Calculator.enterInteractiveLoop(listener, master, shepherd, fileReader);
+        TaskRunner.enterInteractiveLoop(listener, master, shepherd, fileReader);
 
         System.out.println("Stopping...");
 
         // Await termination: The termination should be issued by the reaper
-        Calculator.awaitTermination(actorSystem);
+        TaskRunner.awaitTermination(actorSystem);
     }
 
     private static void enterInteractiveLoop(final ActorRef listener, final ActorRef master, final ActorRef shepherd, final ActorRef fileReader) {
@@ -75,7 +75,7 @@ public class Calculator {
 
             switch (line) {
                 case "start":
-                    Calculator.process(master, fileReader, fileName, numSplits, crackPasswords, compareGenomes);
+                    TaskRunner.process(master, fileReader, fileName, numSplits, crackPasswords, compareGenomes);
                     break;
                 case "input":
                     System.out.print("Enter the new input file: ");
@@ -96,11 +96,11 @@ public class Calculator {
                     System.out.println("Set comparing genomes to " + (compareGenomes ? "on" : "off") + ".");
                     break;
                 case "exit":
-                    Calculator.shutdown(shepherd, master);
+                    TaskRunner.shutdown(shepherd, master);
                     scanner.close();
                     return;
                 case "kill":
-                    Calculator.kill(listener, master, shepherd);
+                    TaskRunner.kill(listener, master, shepherd);
                     scanner.close();
                     return;
                 default:
@@ -161,6 +161,6 @@ public class Calculator {
             .noSender());
 
         // Await termination: The termination should be issued by the reaper
-        Calculator.awaitTermination(actorSystem);
+        TaskRunner.awaitTermination(actorSystem);
     }
 }

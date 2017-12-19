@@ -70,7 +70,7 @@ public class Main {
             default:
                 throw new ParameterException(String.format("Unknown scheduling strategy: %s", masterCommand.schedulingStrategy));
         }
-        Calculator.runMaster(masterCommand.host, masterCommand.port, schedulingStrategyFactory, masterCommand.numLocalWorkers);
+        TaskRunner.runMaster(masterCommand.host, masterCommand.port, schedulingStrategyFactory, masterCommand.numLocalWorkers);
     }
 
     /**
@@ -79,7 +79,7 @@ public class Main {
      * @param slaveCommand defines the parameters of the slave
      */
     private static void startSlave(SlaveCommand slaveCommand) {
-        Calculator.runSlave(slaveCommand.host, slaveCommand.port, slaveCommand.getMasterHost(), slaveCommand.getMasterPort());
+        TaskRunner.runSlave(slaveCommand.host, slaveCommand.port, slaveCommand.getMasterHost(), slaveCommand.getMasterPort());
     }
 
     /**
@@ -105,7 +105,7 @@ public class Main {
          * Defines the scheduling strategy to be used in the master.
          */
         @Parameter(names = {"-s", "--scheduler"}, description = "a scheduling strategy (round-robin or reactive)")
-        String schedulingStrategy = "reactive";
+        String schedulingStrategy = "round-robin";
     }
 
     /**
