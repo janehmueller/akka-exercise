@@ -75,7 +75,11 @@ public class TaskRunner {
 
             switch (line) {
                 case "start":
-                    TaskRunner.process(master, fileReader, fileName, numSplits, crackPasswords, compareGenomes);
+                    if(crackPasswords || compareGenomes) {
+                        TaskRunner.process(master, fileReader, fileName, numSplits, crackPasswords, compareGenomes);
+                    } else {
+                        System.out.print("Both modes were turned off. Not processing anything.");
+                    }
                     break;
                 case "input":
                     System.out.print("Enter the new input file: ");
