@@ -50,7 +50,7 @@ public class FileReader extends AbstractLoggingActor {
     private StudentList readStudents(String file) {
         StudentList studentList = new StudentList();
         try {
-            File studentFile = new File(getClass().getResource("/" + file).toURI());
+            File studentFile = new File(file);
             BufferedReader reader = new BufferedReader(new java.io.FileReader(studentFile));
             String line;
             StudentList students = new StudentList();
@@ -61,10 +61,8 @@ public class FileReader extends AbstractLoggingActor {
                 }
             }
             studentList = students;
-        } catch(URISyntaxException | FileNotFoundException e) {
-            this.log().error("Error opening file {}: {}", file, e.getMessage());
         } catch(IOException e) {
-            this.log().error("Error reading contents of file {}:", file, e.getMessage());
+            this.log().error("Error reading file {}:", file, e.getMessage());
         }
         return studentList;
     }

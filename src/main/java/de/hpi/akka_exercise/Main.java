@@ -9,10 +9,10 @@ import de.hpi.akka_exercise.scheduling.RoundRobinSchedulingStrategy;
 import de.hpi.akka_exercise.scheduling.SchedulingStrategy;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
-
         // Parse the command-line args.
         MasterCommand masterCommand = new MasterCommand();
         SlaveCommand slaveCommand = new SlaveCommand();
@@ -70,7 +70,7 @@ public class Main {
             default:
                 throw new ParameterException(String.format("Unknown scheduling strategy: %s", masterCommand.schedulingStrategy));
         }
-        TaskRunner.runMaster(masterCommand.host, masterCommand.port, schedulingStrategyFactory, masterCommand.numLocalWorkers);
+        TaskRunner.runMaster(masterCommand.host, masterCommand.port, schedulingStrategyFactory, masterCommand.numLocalWorkers, masterCommand.inputFile);
     }
 
     /**
@@ -106,6 +106,12 @@ public class Main {
          */
         @Parameter(names = {"-s", "--scheduler"}, description = "a scheduling strategy (round-robin or reactive)")
         String schedulingStrategy = "round-robin";
+
+        /**
+         * Defines the input file used by the file reader.
+         */
+        @Parameter(names = {"--path"}, description = "a csv input file")
+        String inputFile = "students.csv";
     }
 
     /**

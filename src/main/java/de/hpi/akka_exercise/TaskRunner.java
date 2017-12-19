@@ -18,9 +18,8 @@ public class TaskRunner {
 
     private static final String DEFAULT_MASTER_SYSTEM_NAME = "MasterActorSystem";
     private static final String DEFAULT_SLAVE_SYSTEM_NAME = "SlaveActorSystem";
-    private static final String DEFAULT_INPUT_FILE = "students.csv";
 
-    public static void runMaster(String host, int port, SchedulingStrategy.Factory schedulingStrategyFactory, int numLocalWorkers) {
+    public static void runMaster(String host, int port, SchedulingStrategy.Factory schedulingStrategyFactory, int numLocalWorkers, String inputFile) {
 
         // Create the ActorSystem
         final Config config = AkkaUtils.createRemoteAkkaConfig(host, port);
@@ -40,7 +39,7 @@ public class TaskRunner {
         final ActorRef shepherd = actorSystem.actorOf(Shepherd.props(master), Shepherd.DEFAULT_NAME);
 
         // Enter interactive loop
-        TaskRunner.enterInteractiveLoop(listener, master, shepherd, fileReader);
+        TaskRunner.enterInteractiveLoop(listener, master, shepherd, fileReader, inputFile);
 
         System.out.println("Stopping...");
 
@@ -48,11 +47,11 @@ public class TaskRunner {
         TaskRunner.awaitTermination(actorSystem);
     }
 
-    private static void enterInteractiveLoop(final ActorRef listener, final ActorRef master, final ActorRef shepherd, final ActorRef fileReader) {
+    private static void enterInteractiveLoop(final ActorRef listener, final ActorRef master, final ActorRef shepherd, final ActorRef fileReader, String inputFile) {
 
         // Read ranges from the console and process them
         final Scanner scanner = new Scanner(System.in);
-        String fileName = DEFAULT_INPUT_FILE;
+        String fileName = inputFile;
         boolean crackPasswords = true;
         boolean compareGenomes = true;
         int numSplits = 100;
