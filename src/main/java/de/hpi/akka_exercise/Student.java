@@ -45,4 +45,8 @@ public class Student implements Serializable {
     public String toCSV() {
         return index + "," + name + "," + password + "," + closestGenomeSequenceNeighbor + "," + closestGenomeSequence;
     }
+
+    public String formattedName() {
+        return String.format("%2d %23s", index, "(" + name + ")");
+    }
 }

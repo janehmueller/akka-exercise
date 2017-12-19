@@ -74,20 +74,21 @@ public class Listener extends AbstractLoggingActor {
             int index = entry.getKey();
             String password = entry.getValue();
             studentList.updateStudentPassword(index, password);
-            this.log().info("Cracked password for student {} ({}): {}", index, studentList.getStudent(index).getName() , password);
+            this.log().info("Cracked password for student {}: {}", studentList.getStudent(index).formattedName(), password);
         }
     }
 
     private void handle(LogGeneMatchMessage message) {
         Student x = studentList.getStudent(message.studentIdX);
-        x.updateGenomeNeighbor(message.studentIdY, message.mostCommonSubstring);
-        if(x.isGenomeNeighborFound(studentList.numStudents())) {
-            this.log().info("Genome neighbor for student {} ({}) found: student {} with genome substring {}", x.getIndex(), x.getName(), x.getClosestGenomeSequenceNeighbor(), x.getClosestGenomeSequence());
-        }
         Student y = studentList.getStudent(message.studentIdY);
+        this.log().info("Finished comparing genome sequence for students {}.", String.format("%2d and %2d", x.getIndex(), y.getIndex()));
+        x.updateGenomeNeighbor(message.studentIdY, message.mostCommonSubstring);
         y.updateGenomeNeighbor(message.studentIdX, message.mostCommonSubstring);
+        if(x.isGenomeNeighborFound(studentList.numStudents())) {
+            this.log().info("Genome neighbor for student {} found: student {} with genome substring {}", x.formattedName(), String.format("%2d", x.getClosestGenomeSequenceNeighbor()), x.getClosestGenomeSequence());
+        }
         if(y.isGenomeNeighborFound(studentList.numStudents())) {
-            this.log().info("Genome neighbor for student {} ({}) found: student {} with genome substring {}", y.getIndex(), y.getName(), y.getClosestGenomeSequenceNeighbor(), y.getClosestGenomeSequence());
+            this.log().info("Genome neighbor for student {} found: student {} with genome substring {}", y.formattedName(), String.format("%2d", y.getClosestGenomeSequenceNeighbor()), y.getClosestGenomeSequence());
         }
     }
 
