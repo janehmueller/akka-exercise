@@ -77,7 +77,7 @@ public class TaskRunner {
                     if(crackPasswords || compareGenomes) {
                         TaskRunner.process(master, fileReader, fileName, numSplits, crackPasswords, compareGenomes);
                     } else {
-                        System.out.print("Both modes were turned off. Not processing anything.");
+                        System.out.println("Both modes were turned off. Not processing anything.");
                     }
                     break;
                 case "input":
