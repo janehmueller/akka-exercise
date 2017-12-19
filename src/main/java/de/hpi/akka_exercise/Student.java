@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -17,6 +19,7 @@ public class Student implements Serializable {
     private String genomeSequence;
     private String closestGenomeSequence = "";
     private int closestGenomeSequenceNeighbor;
+    private Set<Integer> genomeUpdates = new HashSet<>();
 
     public Student(String line) {
         String[] splitLines = line.split(",");
@@ -27,15 +30,16 @@ public class Student implements Serializable {
         this.genomeSequence = splitLines[3];
     }
 
-    public boolean isCracked() {
-        return password != null;
-    }
-
     public void updateGenomeNeighbor(int neighborId, String genomeSequence) {
+        genomeUpdates.add(neighborId);
         if(closestGenomeSequence.length() < genomeSequence.length()) {
             closestGenomeSequence = genomeSequence;
             closestGenomeSequenceNeighbor = neighborId;
         }
+    }
+
+    public boolean isGenomeNeighborFound(int numStudents) {
+        return genomeUpdates.size() == numStudents - 1;
     }
 
     public String toCSV() {

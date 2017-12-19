@@ -69,7 +69,6 @@ public class Calculator {
                     + "  \"password\" to toggle whether or not passwords will be cracked (default yes),\n"
                     + "  \"passwordsplits\" to set number of splits used for the password cracking,\n"
                     + "  \"genome\" to toggle whether or not genomes will be compared (default yes),\n"
-                    + "  \"print\" to print,\n"
                     + "  \"exit\" for a graceful shutdown,\n"
                     + "  \"kill\" for a hard shutdown:");
             String line = scanner.nextLine();
@@ -95,9 +94,6 @@ public class Calculator {
                 case "genome":
                     compareGenomes = !compareGenomes;
                     System.out.println("Set comparing genomes to " + (compareGenomes ? "on" : "off") + ".");
-                    break;
-                case "print":
-                    listener.tell(new Listener.LogMessage(), ActorRef.noSender());
                     break;
                 case "exit":
                     Calculator.shutdown(shepherd, master);

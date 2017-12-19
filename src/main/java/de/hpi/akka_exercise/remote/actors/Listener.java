@@ -42,9 +42,6 @@ public class Listener extends AbstractLoggingActor {
         private String mostCommonSubstring;
     }
 
-    @NoArgsConstructor
-    public static class LogMessage implements Serializable {}
-
     @Override
     public void preStart() throws Exception {
         super.preStart();
@@ -63,7 +60,6 @@ public class Listener extends AbstractLoggingActor {
             .match(StudentMessage.class, this::handle)
             .match(LogPasswordMessage.class, this::handle)
             .match(LogGeneMatchMessage.class, this::handle)
-            .match(LogMessage.class, this::handle)
             .match(ShutdownMessage.class, this::handle)
             .matchAny(object -> this.log().error(this.getClass().getName() + " received unknown message: " + object.toString()))
             .build();
@@ -85,22 +81,13 @@ public class Listener extends AbstractLoggingActor {
     private void handle(LogGeneMatchMessage message) {
         Student x = studentList.getStudent(message.studentIdX);
         x.updateGenomeNeighbor(message.studentIdY, message.mostCommonSubstring);
+        if(x.isGenomeNeighborFound(studentList.numStudents())) {
+            this.log().info("Genome neighbor for student {} ({}) found: student {} with genome substring {}", x.getIndex(), x.getName(), x.getClosestGenomeSequenceNeighbor(), x.getClosestGenomeSequence());
+        }
         Student y = studentList.getStudent(message.studentIdY);
         y.updateGenomeNeighbor(message.studentIdX, message.mostCommonSubstring);
-        this.log().info("Finished comparing genome sequence for students {} ({}) and {} ({})", x.getIndex(), x.getName(), y.getIndex(), y.getName());
-    }
-
-    private void handle(LogMessage message) {
-        if (studentList == null) {
-            this.log().info("No passwords have been cracked yet.");
-            return;
-        }
-        this.log().info("Cracked passwords for the following students:");
-        for(Student student : studentList.getStudents()) {
-            if(student.isCracked()) {
-                String name = String.format("Student %2d %23s", student.getIndex(), "(" + student.getName() + ")");
-                this.log().info("{} with password {} and hash {}", name, student.getPassword(), student.getPasswordHash());
-            }
+        if(y.isGenomeNeighborFound(studentList.numStudents())) {
+            this.log().info("Genome neighbor for student {} ({}) found: student {} with genome substring {}", y.getIndex(), y.getName(), y.getClosestGenomeSequenceNeighbor(), y.getClosestGenomeSequence());
         }
     }
 
