@@ -58,9 +58,9 @@ public class AkkaUtils {
 
 
 	public static Config createRemoteAkkaConfig(String host, int port) {
-		Config baseConfig = loadConfig("akka-tutorial/base.conf");
+		Config baseConfig = loadConfig("akka-config/base.conf");
 		Config remoteConfig = loadConfig(
-				"akka-tutorial/remote.conf",
+				"akka-config/remote.conf",
 				new VariableBinding("host", host),
 				new VariableBinding("port", port)
 		);
