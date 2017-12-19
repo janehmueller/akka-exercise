@@ -70,7 +70,7 @@ public class Main {
             default:
                 throw new ParameterException(String.format("Unknown scheduling strategy: %s", masterCommand.schedulingStrategy));
         }
-        Calculator.runMaster(masterCommand.host, masterCommand.port, schedulingStrategyFactory, masterCommand.numLocalWorkers, masterCommand.type);
+        Calculator.runMaster(masterCommand.host, masterCommand.port, schedulingStrategyFactory, masterCommand.numLocalWorkers);
     }
 
     /**
@@ -106,9 +106,6 @@ public class Main {
          */
         @Parameter(names = {"-s", "--scheduler"}, description = "a scheduling strategy (round-robin or reactive)")
         String schedulingStrategy = "reactive";
-
-        @Parameter(names = {"-t", "--type"}, description = "type to process (gene, password)")
-        String type = "password";
     }
 
     /**
@@ -186,20 +183,4 @@ public class Main {
          */
         abstract int getDefaultPort();
     }
-
-        // worker: Reader
-        // TODO: read file
-        // TODO: format file into class
-
-        // worker: pw cracker
-        // TODO: create set of hashes for which we need the clear text passwords
-        // TODO: create number range between 0000000 and 9999999 for worker to hash
-
-        // worker: pw worker
-        // TODO: brute force the number range
-        // TODO: check if the generated hashes appear in the student list (Map[Hash, StudentId])
-        // TODO: return map of matches hashes and the clear text passwords (Map[StudentId, ClearText]
-
-        // worker: pw cracker
-        // TODO: enrich student entries with clear text passwords
 }

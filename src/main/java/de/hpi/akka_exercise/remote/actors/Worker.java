@@ -68,7 +68,7 @@ public class Worker extends AbstractLoggingActor {
                 matchedHashes.put(message.hashIndexMap.get(passwordHash), password);
             }
         }
-        this.getSender().tell(new PWCracker.PasswordMessage(message.id, matchedHashes), this.getSelf());
+        this.getSender().tell(new Master.PasswordMessage(message.id, matchedHashes), this.getSelf());
     }
 
     private void handle(FindGeneMatchMessage message) {
@@ -80,7 +80,7 @@ public class Worker extends AbstractLoggingActor {
         if(mostCommonSubstrings.size() > 1) {
             this.log().info("Found more than one most common substring between students {} and {}. Choosing {}.", message.x.getIndex(), message.y.getIndex(), mostCommonSubstring);
         }
-        this.getSender().tell(new GeneAnalyser.GeneMatchMessage(message.id, message.x.getIndex(), message.y.getIndex(), mostCommonSubstring), this.getSelf());
+        this.getSender().tell(new Master.GenomeMatchMessage(message.id, message.x.getIndex(), message.y.getIndex(), mostCommonSubstring), this.getSelf());
     }
 
     private Set<String> mostCommonSubstring(String x, String y) {

@@ -6,14 +6,7 @@ import akka.actor.Address;
 import akka.actor.PoisonPill;
 import com.typesafe.config.Config;
 import de.hpi.akka_exercise.messages.ShutdownMessage;
-import de.hpi.akka_exercise.remote.actors.FileReader;
-import de.hpi.akka_exercise.remote.actors.GeneAnalyser;
-import de.hpi.akka_exercise.remote.actors.Listener;
-import de.hpi.akka_exercise.remote.actors.PWCracker;
-import de.hpi.akka_exercise.remote.actors.Reaper;
-import de.hpi.akka_exercise.remote.actors.Shepherd;
-import de.hpi.akka_exercise.remote.actors.Slave;
-import de.hpi.akka_exercise.remote.actors.StudentAnalyzer;
+import de.hpi.akka_exercise.remote.actors.*;
 import de.hpi.akka_exercise.scheduling.SchedulingStrategy;
 import de.hpi.akka_exercise.util.AkkaUtils;
 import java.util.Scanner;
@@ -25,8 +18,9 @@ public class Calculator {
 
     private static final String DEFAULT_MASTER_SYSTEM_NAME = "MasterActorSystem";
     private static final String DEFAULT_SLAVE_SYSTEM_NAME = "SlaveActorSystem";
+    private static final String DEFAULT_INPUT_FILE = "students.csv";
 
-    public static void runMaster(String host, int port, SchedulingStrategy.Factory schedulingStrategyFactory, int numLocalWorkers, String type) {
+    public static void runMaster(String host, int port, SchedulingStrategy.Factory schedulingStrategyFactory, int numLocalWorkers) {
 
         // Create the ActorSystem
         final Config config = AkkaUtils.createRemoteAkkaConfig(host, port);
@@ -40,11 +34,8 @@ public class Calculator {
         final ActorRef fileReader = actorSystem.actorOf(FileReader.props(), FileReader.DEFAULT_NAME);
 
         // Create the Masters
-        final ActorRef master = type.equals("password") ?
-            actorSystem.actorOf(PWCracker.props(listener, schedulingStrategyFactory, numLocalWorkers), PWCracker.DEFAULT_NAME) :
-            actorSystem.actorOf(GeneAnalyser.props(listener, schedulingStrategyFactory, numLocalWorkers), GeneAnalyser.DEFAULT_NAME);
+        final ActorRef master = actorSystem.actorOf(Master.props(listener, schedulingStrategyFactory, numLocalWorkers), Master.DEFAULT_NAME);
 
-        // TODO implement Shepard
         // Create the Shepherd
         final ActorRef shepherd = actorSystem.actorOf(Shepherd.props(master), Shepherd.DEFAULT_NAME);
 
@@ -61,22 +52,50 @@ public class Calculator {
 
         // Read ranges from the console and process them
         final Scanner scanner = new Scanner(System.in);
+        String fileName = DEFAULT_INPUT_FILE;
+        boolean crackPasswords = true;
+        boolean compareGenomes = true;
+        int numSplits = 100;
         while (true) {
             // Sleep to reduce mixing of log messages with the regular stdout messages.
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
+            } catch (InterruptedException e) {}
 
             // Read input
             System.out.println("> Enter ...\n"
-                    + "  <return> to start processing,\n"
+                    + "  \"start\" to start processing,\n"
+                    + "  \"input\" to enter a different input file,\n"
+                    + "  \"password\" to toggle whether or not passwords will be cracked (default yes),\n"
+                    + "  \"passwordsplits\" to set number of splits used for the password cracking,\n"
+                    + "  \"genome\" to toggle whether or not genomes will be compared (default yes),\n"
                     + "  \"print\" to print,\n"
                     + "  \"exit\" for a graceful shutdown,\n"
                     + "  \"kill\" for a hard shutdown:");
             String line = scanner.nextLine();
 
             switch (line) {
+                case "start":
+                    Calculator.process(master, fileReader, fileName, numSplits, crackPasswords, compareGenomes);
+                    break;
+                case "input":
+                    System.out.print("Enter the new input file: ");
+                    fileName = scanner.nextLine();
+                    System.out.println("Set input file to " + fileName);
+                    break;
+                case "password":
+                    crackPasswords = !crackPasswords;
+                    System.out.println("Set cracking passwords to " + (crackPasswords ? "on" : "off") + ".");
+                    break;
+                case "passwordsplits":
+                    System.out.print("Enter the new number of splits: ");
+                    numSplits = scanner.nextInt();
+                    System.out.println("Set number of splits to " + numSplits);
+                    break;
+                case "genome":
+                    compareGenomes = !compareGenomes;
+                    System.out.println("Set comparing genomes to " + (compareGenomes ? "on" : "off") + ".");
+                    break;
                 case "print":
                     listener.tell(new Listener.LogMessage(), ActorRef.noSender());
                     break;
@@ -89,7 +108,7 @@ public class Calculator {
                     scanner.close();
                     return;
                 default:
-                    Calculator.process(master, fileReader);
+                    System.out.println("Unknown command: " + line);
             }
         }
     }
@@ -115,9 +134,8 @@ public class Calculator {
         shepherd.tell(PoisonPill.getInstance(), ActorRef.noSender());
     }
 
-    private static void process(final ActorRef master, final ActorRef fileReader) {
-        // TODO extract fileName and numSpilts to user options
-        master.tell(new StudentAnalyzer.BeginWorkMessage("students.csv", fileReader, 100), ActorRef.noSender());
+    private static void process(final ActorRef master, final ActorRef fileReader, String fileName, int numSplits, boolean crackPasswords, boolean compareGenomes) {
+        master.tell(new Master.BeginWorkMessage(fileName, fileReader, numSplits, crackPasswords, compareGenomes), ActorRef.noSender());
     }
 
     public static void awaitTermination(final ActorSystem actorSystem) {

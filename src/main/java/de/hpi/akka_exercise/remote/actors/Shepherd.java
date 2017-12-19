@@ -39,7 +39,7 @@ public class Shepherd extends AbstractLoggingActor {
     /**
      * Construct a new {@link Shepherd} object.
      *
-     * @param master a reference to an {@link StudentAnalyzer} actor to send addresses of subscribed actor systems to
+     * @param master a reference to an {@link Master} actor to send addresses of subscribed actor systems to
      */
     public Shepherd(final ActorRef master) {
         this.master = master;
@@ -95,7 +95,7 @@ public class Shepherd extends AbstractLoggingActor {
         Address remoteAddress = this.getSender().path().address();
 
         // Inform the master about the new remote system.
-        this.master.tell(new StudentAnalyzer.RemoteSystemMessage(remoteAddress), this.getSelf());
+        this.master.tell(new Master.RemoteSystemMessage(remoteAddress), this.getSelf());
     }
 
     private void handle(ShutdownMessage message) {
