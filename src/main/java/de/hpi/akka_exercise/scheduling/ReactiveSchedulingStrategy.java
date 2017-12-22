@@ -213,10 +213,10 @@ public class ReactiveSchedulingStrategy implements SchedulingStrategy {
         if (queryTracker.isComplete()) {
             // Remove the query tracker
             this.queryId2tracker.remove(queryTracker.id);
-        } else {
-            // Re-assign the now free worker
-            this.assignSubqueries();
         }
+
+        // Re-assign the now free worker
+        this.assignSubqueries();
     }
 
     @Override
