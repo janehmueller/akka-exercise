@@ -4,12 +4,10 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
-import de.hpi.akka_exercise.scheduling.ReactiveSchedulingStrategy;
 import de.hpi.akka_exercise.scheduling.RoundRobinSchedulingStrategy;
 import de.hpi.akka_exercise.scheduling.SchedulingStrategy;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
@@ -60,16 +58,7 @@ public class Main {
      */
     private static void startMaster(MasterCommand masterCommand) throws ParameterException {
         SchedulingStrategy.Factory schedulingStrategyFactory;
-        switch (masterCommand.schedulingStrategy) {
-            case "round-robin":
-                schedulingStrategyFactory = new RoundRobinSchedulingStrategy.Factory();
-                break;
-            case "reactive":
-                schedulingStrategyFactory = new ReactiveSchedulingStrategy.Factory();
-                break;
-            default:
-                throw new ParameterException(String.format("Unknown scheduling strategy: %s", masterCommand.schedulingStrategy));
-        }
+        schedulingStrategyFactory = new RoundRobinSchedulingStrategy.Factory();
         TaskRunner.runMaster(masterCommand.host, masterCommand.port, schedulingStrategyFactory, masterCommand.numLocalWorkers, masterCommand.inputFile);
     }
 
@@ -100,12 +89,6 @@ public class Main {
          */
         @Parameter(names = {"-w", "--workers"}, description = "number of workers to start locally")
         int numLocalWorkers = 0;
-
-        /**
-         * Defines the scheduling strategy to be used in the master.
-         */
-        @Parameter(names = {"-s", "--scheduler"}, description = "a scheduling strategy (round-robin or reactive)")
-        String schedulingStrategy = "round-robin";
 
         /**
          * Defines the input file used by the file reader.

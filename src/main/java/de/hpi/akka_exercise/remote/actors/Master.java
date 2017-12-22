@@ -117,7 +117,6 @@ public class Master extends AbstractLoggingActor {
 
     private void schedulePasswordTasks(StudentsMessage message) {
         int intervalSize =  Math.max(numPasswords / numPasswordSplits, 1);
-        // TODO every range is scheduled twice
         for(int i = 0; i < numPasswords; i += intervalSize) {
             int rangeEnd = Math.min(i + intervalSize, numPasswords);
             this.schedulingStrategy.schedule(nextQueryId, message.students.createHashIndexMap(), i, rangeEnd);
